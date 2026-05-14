@@ -2,6 +2,10 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+@app.route("/")
+def home():
+    return "Days to hours converter is running! Use POST /convert to make a request"
+
 calculation_to_hours = 24
 name_of_unit = "hours"
 
