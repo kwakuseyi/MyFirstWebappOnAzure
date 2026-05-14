@@ -1,14 +1,29 @@
-from flask import Flask, render_template
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+calculation_to_hours = 24
+name_of_unit = "hours"
 
-@app.route("/hello")
-def hello():
-    return "Hello, Azure App Service!"
+def days_to_units(num_of_days):
+    return f"{num_of_days} days are {num_of_days * calculation_to_hours} {name_of_unit}"
+
+@app.route("/convert", methods=["POST"])
+def convert():
+    data = request.json.get("days", [])
+    results = []
+    for item in data:
+        try:
+            num = int(item)
+            if num > 0:
+                results.append(days_to_units(num))
+            elif num == 0:
+                results.append("Zero is invalid")
+            else:
+                results.append(f"{num} is negative — no conversion")
+        except ValueError:
+            results.append(f"{item} is not a valid number")
+    return jsonify(results=results)
 
 if __name__ == "__main__":
     app.run()
